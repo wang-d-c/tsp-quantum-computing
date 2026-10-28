@@ -1,0 +1,42 @@
+深度强化学习kNN候选选择：30秒总预算实验
+
+A普通原版LKH，正常WALK初始化，不提供外部路线。
+U先付费生成NN路线，再均匀随机选择候选2-opt、维护小路线池，最后LKH。
+D与U搜索环境相同，用独立训练的深度策略选择候选；最后LKH。
+学习发生在LKH之前，没有修改LKH内部候选集/搜索。无量子计算。
+两层64维4头稀疏kNN注意力、非线性actor、学习式critic，共124290参数。
+4步actor-critic、gamma=.99、Adam，128张训练图、32张验证图，五个训练种子；验证集选检查点，测试集不参与训练或选择。
+12张独立测试图×5配对种子×3流程=180次冷启动；每次总墙钟30秒。
+预算含进程启动、NN、模型加载、矩阵、kNN、编码、动态特征/推理、路线池、路线核验与LKH。
+负相对差表示路线更短；图内平均配对种子差后，对12张地图等权平均。
+D-A与D-U采用整图分层bootstrap的Bonferroni97.5%区间；U-A仅描述。
+
+D_vs_A: 平均长度变化-16.456835%；区间[-41.18942658551816, 0.0026020127903979102]。
+配对胜平负{'wins': 22, 'ties': 27, 'losses': 11}；地图胜平负{'wins': 5, 'ties': 3, 'losses': 4}。
+输出阶段描述（不剔除任何成绩）{'both_outputs': {'pairs': 50, 'maps': 10, 'equal_map_mean_percent': -0.0019860096790978122, 'wins': 12, 'ties': 27, 'losses': 11}, 'neither_output': {'pairs': 10, 'maps': 2, 'equal_map_mean_percent': -98.73108181657835, 'wins': 10, 'ties': 0, 'losses': 0}, 'mixed_outputs': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}, 'unknown_output_ledger': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}}。
+
+D_vs_U: 平均长度变化-0.020936%；区间[-0.05616715249513418, 0.007057288510614885]。
+配对胜平负{'wins': 23, 'ties': 29, 'losses': 8}；地图胜平负{'wins': 5, 'ties': 3, 'losses': 4}。
+输出阶段描述（不剔除任何成绩）{'both_outputs': {'pairs': 50, 'maps': 10, 'equal_map_mean_percent': 0.0013320151045521527, 'wins': 13, 'ties': 29, 'losses': 8}, 'neither_output': {'pairs': 10, 'maps': 2, 'equal_map_mean_percent': -0.13227613296119548, 'wins': 10, 'ties': 0, 'losses': 0}, 'mixed_outputs': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}, 'unknown_output_ledger': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}}。
+
+U_vs_A: 平均长度变化-16.457604%；区间[-40.99120283553278, 0.0017703017738681759]。
+配对胜平负{'wins': 21, 'ties': 26, 'losses': 13}；地图胜平负{'wins': 3, 'ties': 4, 'losses': 5}。
+输出阶段描述（不剔除任何成绩）{'both_outputs': {'pairs': 50, 'maps': 10, 'equal_map_mean_percent': -0.0032302039199496786, 'wins': 11, 'ties': 26, 'losses': 13}, 'neither_output': {'pairs': 10, 'maps': 2, 'equal_map_mean_percent': -98.7294707128481, 'wins': 10, 'ties': 0, 'losses': 0}, 'mixed_outputs': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}, 'unknown_output_ledger': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}}。
+
+普通LKH无完整路线输出时，共同合法identity兜底可能明显弱于NN；因此D-A不能单独证明RL收益。
+D-U才控制共同的NN、候选、算子和路线池。无LKH输出与有输出结果必须分开解释，条件子组不替代主要终点。
+五个种子同时绑定训练模型、NN起点及LKH随机性，地图区间条件于这五个固定组合。
+
+在线平均成本（秒）：
+A: 进入LKH前0.11502061833355887；加载None；搜索分项{}；
+状态{'completed': 60}；无LKH路线输出10次；最终来源{'lkh': 50, 'initial_identity': 10}。
+U: 进入LKH前1.2061756800016155；加载0.0；搜索分项{'candidate_construction_seconds': 0.12959693498172176, 'inference_seconds': 0.0005425316601758822, 'audit_seconds': 0.013770901582514245, 'knn_seconds': 0.10684287333375929, 'feature_seconds': 0.23603475332978027, 'candidate_selection_seconds': 0.002324873339966871, 'pool_seconds': 0.016970603452258124, 'application_seconds': 0.0002659849861326317, 'publication_seconds': 0.019630118335286776, 'exact_evaluation_seconds': 0.0018010316969593986}；
+状态{'completed': 60}；无LKH路线输出10次；最终来源{'lkh': 50, 'uniform_candidate': 10}。
+D: 进入LKH前1.473307868335784；加载0.08324873166857287；搜索分项{'candidate_construction_seconds': 0.13284728837995013, 'encoder_seconds': 0.046086473337102994, 'inference_seconds': 0.08009548831517653, 'audit_seconds': 0.014548993303712147, 'knn_seconds': 0.10685522666608449, 'feature_seconds': 0.23805917824987166, 'candidate_selection_seconds': 0.0022953999859358495, 'pool_seconds': 0.03919944001924402, 'application_seconds': 0.0003323733020806685, 'publication_seconds': 0.03677833665569778, 'exact_evaluation_seconds': 0.0017377783350336054}；
+状态{'completed': 60}；无LKH路线输出10次；最终来源{'lkh': 50, 'deep_candidate': 10}。
+
+离线训练/验证全流程1945.292秒，单独记录；训练1677.108秒，检查点验证233.995秒。
+这是论文启发的稀疏改造：共享静态几何编码器、动态当前路线解码、小路线池、只接受改进动作、有限128步目标。
+原论文全图注意力、位置编码、允许变差动作、训练规模等不同，不能称完整复现，也不能据此否定所有深度RL或所有LKH配置。
+完整逐图原始长度、逐种子、统计和在线成本在analysis/；全部训练日志、权重、输入在models/。
+复验使用新的空输出目录，命令与依赖见实验设置与复现.txt。训练需torch2.14.1+cpu；在线仅需记录版本的NumPy与psutil。

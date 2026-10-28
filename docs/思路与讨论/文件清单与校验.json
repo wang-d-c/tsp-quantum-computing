@@ -1,0 +1,16 @@
+{
+  "description": "GitHub 发布副本的文档来源与校验；不是原本地整包清单。软件与原始数据不在发布范围。",
+  "original_file_sha256": {
+    "00_阅读说明.md": "02a454621b65a21b5dc70a552f240a4f5131e0ab1cb776071d65d21f032a7222",
+    "01_TSP优化思路总整理.md": "db1cc824c00664f541e8ac3327c0d8d0ddc51e0bca469e79f682c9fe8fc25d79",
+    "02_实验结果与证据.md": "3c6c4af3504b629c35aebfda35fa86acc12befa6b7dd44b6a209717316c8c622",
+    "tsp spark.md.md": "a51f12d2aada2881ca6c26b1f142f9ef6357f8cf552fa4cf258d3b7898f58132",
+    "文件清单与校验.json": "b50bfa049a16c8f2d3e83cc61e85a1b12f83e49e3f22e3b68a4c05b559a6884e"
+  },
+  "publication_changes": [
+    "补充120配对结果入口",
+    "移除软件附件承诺",
+    "将本地文件链接转换为相对报告链接或标明未上传",
+    "重新生成本次清单"
+  ]
+}

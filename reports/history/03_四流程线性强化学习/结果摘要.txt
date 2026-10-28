@@ -1,0 +1,54 @@
+四流程TSP强化学习验证：结果速读
+
+12张测试地图×5个配对种子×4条流程=240次冷启动；每次30秒总墙钟上限。
+A：NN→LKH；B：固定规则短窗口与路线池→LKH；C：RL选择相同窗口/算子与路线池→LKH；D：RL选择候选2-opt→LKH。
+B/C/D也都先独立计费生成NN初始路线；LKH为同一3.0.14 ALPHA5配置。
+在线开销含模型加载、特征、推理、候选构造、路线池维护及全部精修。
+模型为轻量线性softmax策略，使用真实顺序rollout和REINFORCE训练；不是深度神经网络。
+训练160张、验证40张；五组独立模型与五个测试种子预先一一映射。
+训练与测试核心使用同一候选/算子/路线池语义，训练24步、测试最多128步；训练城市128..1000，测试含更大规模及公开图。
+
+相对差=100×(方法长度−基线长度)/基线长度，负数更短；先平均每张图的配对种子差，再对图等权平均。
+三个vsA比较采用Bonferroni98.333%地图bootstrap区间控制多重比较；CvsB是次要机制对照。
+
+B相对A：-0.044774%；95%区间[-0.10630057342496053, -9.444520837210122e-05]；
+多比较区间[-0.112464%, +0.001230%]，区间跨零，未确认稳定平均优势。
+配对胜平负{'wins': 22, 'ties': 26, 'losses': 12}；地图胜平负{'wins': 5, 'ties': 3, 'losses': 4}。
+预设输出阶段诊断（不剔除任何成绩）：{'both_outputs': {'pairs': 50, 'maps': 10, 'equal_map_mean_percent': -0.0012814440035170153, 'wins': 12, 'ties': 26, 'losses': 12}, 'neither_output': {'pairs': 10, 'maps': 2, 'equal_map_mean_percent': -0.2622348382541738, 'wins': 10, 'ties': 0, 'losses': 0}, 'mixed_outputs': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}}。
+
+C相对A：-0.042828%；95%区间[-0.10507162949657511, 0.003185205879152365]；
+多比较区间[-0.119776%, +0.003812%]，区间跨零，未确认稳定平均优势。
+配对胜平负{'wins': 21, 'ties': 25, 'losses': 14}；地图胜平负{'wins': 3, 'ties': 4, 'losses': 5}。
+预设输出阶段诊断（不剔除任何成绩）：{'both_outputs': {'pairs': 50, 'maps': 10, 'equal_map_mean_percent': 0.002285981992276316, 'wins': 11, 'ties': 25, 'losses': 14}, 'neither_output': {'pairs': 10, 'maps': 2, 'equal_map_mean_percent': -0.2683992053769483, 'wins': 10, 'ties': 0, 'losses': 0}, 'mixed_outputs': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}}。
+
+D相对A：-0.048906%；95%区间[-0.12709600268001653, 0.010883155681988697]；
+多比较区间[-0.137072%, +0.016260%]，区间跨零，未确认稳定平均优势。
+配对胜平负{'wins': 21, 'ties': 27, 'losses': 12}；地图胜平负{'wins': 5, 'ties': 4, 'losses': 3}。
+预设输出阶段诊断（不剔除任何成绩）：{'both_outputs': {'pairs': 50, 'maps': 10, 'equal_map_mean_percent': 0.005950271075877601, 'wins': 11, 'ties': 27, 'losses': 12}, 'neither_output': {'pairs': 10, 'maps': 2, 'equal_map_mean_percent': -0.3231852083836966, 'wins': 10, 'ties': 0, 'losses': 0}, 'mixed_outputs': {'pairs': 0, 'maps': 0, 'equal_map_mean_percent': None, 'wins': 0, 'ties': 0, 'losses': 0}}。
+
+C相对B（学习选择器的次要对照）：+0.001954%；95%区间[-0.014057458661487027, 0.017361754031420724]。
+若学习流程超过A但未超过B，不能把共同局部搜索/路线池的收益全部归因于强化学习。
+
+在线阶段成本（每方法60次均值，秒）：
+A: 进入LKH前累计0.39214419000297007；模型加载None；分项{}。
+状态{'completed': 60}；无LKH路线输出10次。
+B: 进入LKH前累计0.8078064849978546；模型加载0.0；分项{'candidate_construction_seconds': 0.008800336652590583, 'inference_seconds': 0.0007493616877278934, 'action_construction_seconds': 0.003026290036117037, 'application_seconds': 0.00039157165059198936, 'feature_seconds': 0.02822367498204888, 'publication_seconds': 0.01540903166460339, 'exact_evaluation_seconds': 0.002798604982672259, 'audit_seconds': 0.00023010831888920318, 'pool_seconds': 0.06367769167021227}。
+状态{'completed': 60}；无LKH路线输出10次。
+C: 进入LKH前累计0.8083855983384031；模型加载0.0013286366728910556；分项{'candidate_construction_seconds': 0.008809056673392964, 'inference_seconds': 0.004259079952801888, 'action_construction_seconds': 0.003112655057338998, 'application_seconds': 0.0004160566837526858, 'feature_seconds': 0.02858350161307802, 'publication_seconds': 0.015975633325676124, 'exact_evaluation_seconds': 0.0028075816556035233, 'audit_seconds': 0.0002446749887894839, 'pool_seconds': 0.06775816667844387}。
+状态{'completed': 60}；无LKH路线输出10次。
+D: 进入LKH前累计1.2409667600004468；模型加载0.0015380583354271948；分项{'knn_seconds': 0.10431010000465904, 'candidate_construction_seconds': 0.1350443699862808, 'feature_seconds': 0.24131358334658823, 'publication_seconds': 0.010091178328730166, 'exact_evaluation_seconds': 0.0018666749771606799, 'pool_seconds': 0.038532771642591494, 'candidate_selection_seconds': 0.00235067331038105, 'inference_seconds': 0.006696124988957308, 'application_seconds': 0.00032196334504988047, 'audit_seconds': 0.00032524164901891103}。
+状态{'completed': 60}；无LKH路线输出10次。
+
+离线训练全过程（含训练/验证输入准备）131.05116899998393秒；
+其中训练rollout/更新83.833秒，选checkpoint验证41.373秒（完整时间还含uniform验证和日志等）。
+所有训练日志、验证记录、模型、坐标、原始计分与成本账本均保存。
+无量子计算；不能外推为超过调参后的所有LKH配置或否定其他强化学习架构。
+
+完整逐图/逐种子与统计：analysis/中文结果说明.txt、analysis/results.json。
+计分核验：analysis/audit.json；训练/验证/测试分离：train_test_separation.json。
+复验：保持登记的LKH可执行文件与environment.json相同；安装记录的依赖版本。
+python -B STUDY/source/run.py --model-directory STUDY/models --input-directory STUDY/inputs --output NEW_STUDY --freeze-only
+python -B STUDY/source/run.py --execute-frozen NEW_STUDY
+python -B STUDY/source/analyze.py NEW_STUDY
+重训：python -B STUDY/source/train.py --output-dir NEW_MODELS
+NEW_STUDY和NEW_MODELS必须使用尚不存在的新位置，原始实验不得覆盖。

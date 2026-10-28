@@ -1,0 +1,23 @@
+# This repository publishes reports and source, without experimental data.
+__pycache__/
+.pytest_cache/
+**/cache/
+**/inputs/
+**/models/
+**/datasets*/
+**/j[0-9]*/
+row[0-9]*.json
+arm[0-9]*_start.json
+results.json
+*.csv
+*.tsp
+*.tsp.gz
+*.tour
+*.pt
+*.pth
+*.npz
+*.npy
+*.exe
+*.dll
+*.zip
+!packages/*.zip
